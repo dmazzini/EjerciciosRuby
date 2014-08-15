@@ -1,7 +1,7 @@
 require 'test/unit'
  
 class XXX < Test::Unit::TestCase
-  def test1
+  def testComprar
 	efectivoInicial = 1000000
 	agente = Agente.new(efectivoInicial)
 	
@@ -11,7 +11,7 @@ class XXX < Test::Unit::TestCase
 	assert_equal(75, agente.cantidadAccionesDe("GGAL"))
   end
   
-    def test2
+    def testVender
 	efectivoInicial = 1000000
 	agente = Agente.new(efectivoInicial)
 	

@@ -45,7 +45,7 @@ class Agente
 	end
 	
 	def cantidadAccionesDe(nombreEmpresa)
-		accionesHash = acciones.group_by {|obj| obj[0]}
+		accionesHash = @acciones.group_by {|obj| obj[0]}
 		@acciones.inject { |sum, obj| sum + obj[0] }    
 	end
 end

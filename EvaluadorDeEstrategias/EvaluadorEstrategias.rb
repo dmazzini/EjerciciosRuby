@@ -27,7 +27,7 @@ end
 class Agente
 	def initialize(efectivo)
 		@efectivo = efectivo
-		@acciones = Hash.new(0)
+		@acciones = Array.new()
 	end
 	
 	def efectivo
@@ -36,15 +36,16 @@ class Agente
 	
 	def comprar(monto, nombreEmpresa, cantidadAcciones, fecha)
 		@efectivo -= monto
-		@acciones[nombreEmpresa] += cantidadAcciones
+		@acciones.push([nombreEmpresa, cantidadAcciones, monto, fecha]) 
 	end
 	
 	def vender(monto, nombreEmpresa, cantidadAcciones, fecha)
 		@efectivo += monto
-		@acciones[nombreEmpresa] -= cantidadAcciones
+		@acciones.delete_at(nombreEmpresa)
 	end
 	
 	def cantidadAccionesDe(nombreEmpresa)
-		@acciones[nombreEmpresa]
+		accionesHash = acciones.group_by {|obj| obj[0]}
+		@acciones.inject { |sum, obj| sum + obj[0] }    
 	end
 end

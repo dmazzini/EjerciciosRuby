@@ -1,6 +1,7 @@
 require 'test/unit'
 require 'date'
- 
+require 'set'
+
 class XXX < Test::Unit::TestCase
   def testComprar
 	efectivoInicial = 1000000
@@ -13,21 +14,38 @@ class XXX < Test::Unit::TestCase
   end
   
     def testVender
-	efectivoInicial = 1000000
-	agente = Agente.new(efectivoInicial)
+	 efectivoInicial = 1000000
+	 agente = Agente.new(efectivoInicial)
 	
-	agente.comprar(100.5, "GGAL", 75, Date.new(2014, 3, 1))
-	agente.vender(70.3, "GGAL", 22, Date.new(2014, 3, 2))
+	 agente.comprar(100.5, "GGAL", 75, Date.new(2014, 3, 1))
+	 agente.vender(70.3, "GGAL", 22, Date.new(2014, 3, 2))
 	
     assert_equal(999969.8, agente.efectivo)
-	assert_equal(53, agente.cantidadAccionesDe("GGAL"))
+  	assert_equal(53, agente.cantidadAccionesDe("GGAL"))
+  end
+end
+
+class Accion
+  def initialize(nombreEmpresa, monto, cantidad, fecha)
+    @nombreEmpresa = nombreEmpresa
+    @monto = monto
+    @cantidad = cantidad
+    @fecha = fecha
+  end
+
+  def nombreEmpresa
+    @nombreEmpresa
+  end
+
+  def cantidad
+    @cantidad
   end
 end
 
 class Agente
 	def initialize(efectivo)
 		@efectivo = efectivo
-		@acciones = Array.new()
+		@acciones = Set.new
 	end
 	
 	def efectivo
@@ -36,16 +54,15 @@ class Agente
 	
 	def comprar(monto, nombreEmpresa, cantidadAcciones, fecha)
 		@efectivo -= monto
-		@acciones.push([nombreEmpresa, cantidadAcciones, monto, fecha]) 
+		@acciones.add(Accion.new(nombreEmpresa, monto, cantidadAcciones, fecha))
 	end
 	
 	def vender(monto, nombreEmpresa, cantidadAcciones, fecha)
 		@efectivo += monto
-		@acciones.delete_at(nombreEmpresa)
+		@acciones.delete_if {|accion| accion.nombreEmpresa == nombreEmpresa}
 	end
 	
 	def cantidadAccionesDe(nombreEmpresa)
-		accionesHash = @acciones.group_by {|obj| obj[0]}
-		@acciones.inject { |sum, obj| sum + obj[0] }    
+		(@acciones.keep_if {|accion| accion.nombreEmpresa == nombreEmpresa}).inject { |sum, accion| sum + accion.cantidad }
 	end
 end

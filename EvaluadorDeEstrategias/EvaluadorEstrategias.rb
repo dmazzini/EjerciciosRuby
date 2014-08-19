@@ -33,18 +33,18 @@ class XXX < Test::Unit::TestCase
     assert_equal(0, agente.cantidadAccionesDe(nombreEmpresa))
   end
 
-  def test1
+  def testCotizacionEmpresa
     nombreEmpresa = "YPF"
     fecha = Date.new(2014, 4, 1)
 
     assert_equal(290, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
   end
 
-  def test2
+  def testCotizacionFecha
     nombreEmpresa = "TS"
-    fecha = Date.new(2014, 4, 1)
+    fecha = Date.new(2014, 4, 2)
 
-    assert_equal(215.5, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
+    assert_equal(216.5, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
   end
 
 end
@@ -75,6 +75,12 @@ class Cotizaciones
        Cotizacion.new("YPF", Date.new(2014, 4, 1), 290),
        Cotizacion.new("TS", Date.new(2014, 4, 1), 215.5),
        Cotizacion.new("YPF", Date.new(2014, 4, 1), 13.45),
+       Cotizacion.new("YPF", Date.new(2014, 4, 2), 294),
+       Cotizacion.new("TS", Date.new(2014, 4, 2), 216.5),
+       Cotizacion.new("YPF", Date.new(2014, 4, 2), 13.25),
+	   Cotizacion.new("YPF", Date.new(2014, 4, 3), 288),
+       Cotizacion.new("TS", Date.new(2014, 4, 3), 216),
+       Cotizacion.new("YPF", Date.new(2014, 4, 3), 12.8),
    ]
 
   def self.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha)

@@ -4,24 +4,83 @@ require 'set'
 
 class XXX < Test::Unit::TestCase
   def testComprar
+    nombreEmpresa = "GGAL"
     efectivoInicial = 1000000
     agente = Agente.new(efectivoInicial)
+    cantidad = 75
+    cotizacionCompra = 13
+    fecha = Date.new(2014, 4, 1)
 
-    agente.comprar("GGAL", 75, 13, Date.new(2014, 3, 1))
+    agente.comprar(nombreEmpresa, cantidad, cotizacionCompra, fecha)
 
     assert_equal(999025, agente.efectivo)
-    assert_equal(75, agente.cantidadAccionesDe("GGAL"))
+    assert_equal(75, agente.cantidadAccionesDe(nombreEmpresa))
   end
 
   def testVender
+    nombreEmpresa = "GGAL"
     efectivoInicial = 1000000
     agente = Agente.new(efectivoInicial)
+    cantidad = 75
+    cotizacionCompra = 13
+    cotizacionVenta = 12
+    fecha = Date.new(2014, 4, 1)
 
-    agente.comprar("GGAL", 75, 13, Date.new(2014, 3, 1))
-    agente.vender("GGAL", 12)
+    agente.comprar(nombreEmpresa, cantidad, cotizacionCompra, fecha)
+    agente.vender(nombreEmpresa, cotizacionVenta)
 
     assert_equal(999925, agente.efectivo)
-    assert_equal(0, agente.cantidadAccionesDe("GGAL"))
+    assert_equal(0, agente.cantidadAccionesDe(nombreEmpresa))
+  end
+
+  def test1
+    nombreEmpresa = "YPF"
+    fecha = Date.new(2014, 4, 1)
+
+    assert_equal(290, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
+  end
+
+  def test2
+    nombreEmpresa = "TS"
+    fecha = Date.new(2014, 4, 1)
+
+    assert_equal(215.5, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
+  end
+
+end
+
+class Cotizacion
+
+  def initialize(nombreEmpresa, fecha, cotizacion)
+    @nombreEmpresa = nombreEmpresa
+    @fecha = fecha
+    @cotizacion = cotizacion
+  end
+
+  def nombreEmpresa
+    @nombreEmpresa
+  end
+
+  def fecha
+    @fecha
+  end
+
+  def cotizacion
+    @cotizacion
+  end
+end
+
+class Cotizaciones
+   COTIZACIONES = [
+       Cotizacion.new("YPF", Date.new(2014, 4, 1), 290),
+       Cotizacion.new("TS", Date.new(2014, 4, 1), 215.5),
+       Cotizacion.new("YPF", Date.new(2014, 4, 1), 13.45),
+   ]
+
+  def self.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha)
+    COTIZACIONES.select {
+        |cotizacion| cotizacion.nombreEmpresa==nombreEmpresa && cotizacion.fecha==fecha
+    }.first.cotizacion
   end
 end
 

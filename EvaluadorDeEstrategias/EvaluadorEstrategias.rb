@@ -1,6 +1,9 @@
+$LOAD_PATH << '.'
 require 'test/unit'
 require 'date'
 require 'set'
+require 'Cotizaciones.rb'
+require 'Agente.rb'
 
 class XXX < Test::Unit::TestCase
   def testComprar
@@ -47,96 +50,41 @@ class XXX < Test::Unit::TestCase
     assert_equal(216.5, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
   end
 
+  def test1
+    nombreEmpresa = "GGAL"
+    fecha = Date.new(2014, 4, 2)
+    agente = Agente.new(1000000)
+    estrategia = Estrategia.new()
+
+    assert_kind_of(Compra, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
+  end
+
+  def test2
+    nombreEmpresa = "YPF"
+    fecha = Date.new(2014, 4, 4)
+    agente = Agente.new(1000000)
+    estrategia = Estrategia.new()
+
+    assert_kind_of(Venta, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
+  end
+
 end
 
-class Cotizacion
-
-  def initialize(nombreEmpresa, fecha, cotizacion)
-    @nombreEmpresa = nombreEmpresa
-    @fecha = fecha
-    @cotizacion = cotizacion
-  end
-
-  def nombreEmpresa
-    @nombreEmpresa
-  end
-
-  def fecha
-    @fecha
-  end
-
-  def cotizacion
-    @cotizacion
-  end
-end
-
-class Cotizaciones
-   COTIZACIONES = [
-       Cotizacion.new("YPF", Date.new(2014, 4, 1), 290),
-       Cotizacion.new("TS", Date.new(2014, 4, 1), 215.5),
-       Cotizacion.new("YPF", Date.new(2014, 4, 1), 13.45),
-       Cotizacion.new("YPF", Date.new(2014, 4, 2), 294),
-       Cotizacion.new("TS", Date.new(2014, 4, 2), 216.5),
-       Cotizacion.new("YPF", Date.new(2014, 4, 2), 13.25),
-	   Cotizacion.new("YPF", Date.new(2014, 4, 3), 288),
-       Cotizacion.new("TS", Date.new(2014, 4, 3), 216),
-       Cotizacion.new("YPF", Date.new(2014, 4, 3), 12.8),
-   ]
-
-  def self.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha)
-    COTIZACIONES.select {
-        |cotizacion| cotizacion.nombreEmpresa==nombreEmpresa && cotizacion.fecha==fecha
-    }.first.cotizacion
+class Estrategia
+  def operacion_a_realizar(agente, nombreEmpresa, fecha)
+    cotizacionDiaAnterior = Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha-1)
+    cotizacionAcutal = Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha)
+    diferencia = cotizacionAcutal - cotizacionDiaAnterior
+    porcentaje = (diferencia/cotizacionDiaAnterior)*100
+    puts diferencia
+    Compra.new
   end
 end
 
-class Accion
-  def initialize(nombreEmpresa, cantidad, cotizacion, fecha)
-    @nombreEmpresa = nombreEmpresa
-    @cantidad = cantidad
-    @cotizacion = cotizacion
-    @fecha = fecha
-  end
+class Compra
 
-  def nombreEmpresa
-    @nombreEmpresa
-  end
-
-  def cantidad
-    @cantidad
-  end
 end
 
-class Agente
-  def initialize(efectivo)
-    @efectivo = efectivo
-    @acciones = Set.new
-  end
+class Venta
 
-  def efectivo
-    @efectivo
-  end
-
-  def comprar(nombreEmpresa, cantidad, cotizacion, fecha)
-    @efectivo -= (cantidad*cotizacion)
-    @acciones.add(Accion.new(nombreEmpresa, cantidad, cotizacion, fecha))
-  end
-
-  def vender(nombreEmpresa, cotizacion)
-    @efectivo += (cantidadAccionesDe(nombreEmpresa)*cotizacion)
-    @acciones.delete_if { |accion| accion.nombreEmpresa == nombreEmpresa }
-  end
-
-  def cantidadAccionesDe(nombreEmpresa)
-    #Ver como hacer con inject
-    #accionesDeEmpresa = (@acciones.keep_if {|accion| accion.nombreEmpresa == nombreEmpresa})
-    #accionesDeEmpresa.inject { |sum, accion| sum + accion.cantidad }
-    sum = 0
-    @acciones.each do |accion|
-      if accion.nombreEmpresa == nombreEmpresa
-        sum += accion.cantidad
-      end
-    end
-    sum
-  end
 end

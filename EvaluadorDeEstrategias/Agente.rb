@@ -13,6 +13,10 @@ class Accion
   def cantidad
     @cantidad
   end
+  
+  def fecha
+	@fecha
+  end
 end
 
 class Agente
@@ -40,11 +44,22 @@ class Agente
     #accionesDeEmpresa = (@acciones.keep_if {|accion| accion.nombreEmpresa == nombreEmpresa})
     #accionesDeEmpresa.inject { |sum, accion| sum + accion.cantidad }
     sum = 0
-    @acciones.each do |accion|
+    @acciones.each { |accion|
       if accion.nombreEmpresa == nombreEmpresa
         sum += accion.cantidad
       end
-    end
+	}
     sum
   end
+  
+  def fechaDeAccionMasAntigua(nombreEmpresa)
+	fechaMasAntigua = nil	
+    @acciones.each { |accion|		
+      if (accion.nombreEmpresa == nombreEmpresa) && (fechaMasAntigua.nil? || (accion.fecha < fechaMasAntigua))
+		fechaMasAntigua  = accion.fecha      
+      end
+	}
+    fechaMasAntigua
+  end
+  
 end

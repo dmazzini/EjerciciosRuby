@@ -50,34 +50,39 @@ class XXX < Test::Unit::TestCase
     assert_equal(216.5, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
   end
 
-  def test1
+  def test_estrategia1_compra
     nombreEmpresa = "GGAL"
     fecha = Date.new(2014, 4, 2)
     agente = Agente.new(1000000)
-    estrategia = Estrategia.new()
+    estrategia = Estrategia1.new()
 
     assert_kind_of(Compra, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
   end
 
-  def test2
+  def test_estrategia1_venta
     nombreEmpresa = "YPF"
     fecha = Date.new(2014, 4, 4)
     agente = Agente.new(1000000)
-    estrategia = Estrategia.new()
+    estrategia = Estrategia1.new()
 
     assert_kind_of(Venta, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
   end
 
 end
 
-class Estrategia
+class Estrategia1
   def operacion_a_realizar(agente, nombreEmpresa, fecha)
     cotizacionDiaAnterior = Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha-1)
     cotizacionAcutal = Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha)
     diferencia = cotizacionAcutal - cotizacionDiaAnterior
-    porcentaje = (diferencia/cotizacionDiaAnterior)*100
-    puts diferencia
-    Compra.new
+    porcentaje = (diferencia.to_f*100)/cotizacionDiaAnterior.to_f
+
+    if porcentaje < -1
+      Compra.new
+    elsif porcentaje > 2
+      Venta.new
+    end
+
   end
 end
 

@@ -148,7 +148,6 @@ class XXX < Test::Unit::TestCase
     nombreEmpresa = "GGAL"
     fecha = Date.new(2014, 4, 2)
     agente = Agente.new(1000000)
-
     estrategia = Estrategia.new(condicionCompra2, condicionVenta2)
 
     assert_kind_of(Compra, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
@@ -178,7 +177,25 @@ class XXX < Test::Unit::TestCase
 
     assert_kind_of(SinOperacion, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
   end
+  
+  def test_evaluar_estrategias
+  
+	mes = 4
+	efectivoInicial = 1000000
+	estrategia1 = Estrategia.new(condicionCompra1, condicionVenta1)
+	estrategia2 = Estrategia.new(condicionCompra2, condicionVenta2)	
+	estrategias = [estrategia1, estrategia2]
+	evaluadorEstrategias = EvaluadorDeEstrategias.new
+	
+	estrategiasMasConvenientes = evaluadorEstrategias.evaluarEstrategias(mes, efectivoInicial, estrategias)
+	
+	assert(estrategiasMasConvenientes.include?(estrategia1))
+  end
 end
 
-
+class EvaluadorDeEstrategias
+	def evaluarEstrategias(mes, efectivoInicial, estrategias)
+	
+	end
+end
 

@@ -6,7 +6,7 @@ require 'Cotizaciones.rb'
 require 'Agente.rb'
 
 class XXX < Test::Unit::TestCase
-  def testComprar
+  def test_agente_comprar
     nombreEmpresa = "GGAL"
     efectivoInicial = 1000000
     agente = Agente.new(efectivoInicial)
@@ -20,7 +20,7 @@ class XXX < Test::Unit::TestCase
     assert_equal(75, agente.cantidadAccionesDe(nombreEmpresa))
   end
 
-  def testVender
+  def test_agente_vender
     nombreEmpresa = "GGAL"
     efectivoInicial = 1000000
     agente = Agente.new(efectivoInicial)
@@ -36,14 +36,14 @@ class XXX < Test::Unit::TestCase
     assert_equal(0, agente.cantidadAccionesDe(nombreEmpresa))
   end
 
-  def testCotizacionEmpresa
+  def test_cotizacion_empresa
     nombreEmpresa = "YPF"
     fecha = Date.new(2014, 4, 1)
 
     assert_equal(290, Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha))
   end
 
-  def testCotizacionFecha
+  def test_cotizacion_fecha
     nombreEmpresa = "TS"
     fecha = Date.new(2014, 4, 2)
 
@@ -68,6 +68,24 @@ class XXX < Test::Unit::TestCase
     assert_kind_of(Venta, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
   end
 
+  def test_estrategia2_compra
+    nombreEmpresa = "GGAL"
+    fecha = Date.new(2014, 4, 2)
+    agente = Agente.new(1000000)
+    estrategia = Estrategia2.new()
+
+    assert_kind_of(Compra, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
+  end
+
+  def test_estrategia2_venta
+    nombreEmpresa = "GGAL"
+    fecha = Date.new(2014, 4, 7)
+    agente = Agente.new(1000000)
+    estrategia = Estrategia2.new()
+
+    assert_kind_of(Venta, estrategia.operacion_a_realizar(agente, nombreEmpresa, fecha))
+  end
+
 end
 
 class Estrategia1
@@ -84,6 +102,27 @@ class Estrategia1
     end
 
   end
+end
+
+class Estrategia2
+  def operacion_a_realizar(agente, nombreEmpresa, fecha)
+    cotizacionDiaAnterior = Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha-1)
+    cotizacionAcutal = Cotizaciones.cotizacionDeEmpresaEnFecha(nombreEmpresa, fecha)
+    diferencia = cotizacionAcutal - cotizacionDiaAnterior
+    porcentaje = (diferencia.to_f*100)/cotizacionDiaAnterior.to_f
+
+    condicion1 = porcentaje < -1
+
+    condicion2 = false
+
+    if condicion1 || condicion2
+      Compra.new
+    elsif agente.fechaUltimaCompra(nombreEmpresa)
+      Venta.new
+    end
+
+  end
+
 end
 
 class Compra
